@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Move Built-in Rules to subsection under Usage
+
 ## 0.1.1
 
 - Add badges and Development section to README
