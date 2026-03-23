@@ -38,6 +38,46 @@ func main() {
 }
 ```
 
+### Custom Messages
+
+Use the `msg` tag option to provide a custom error message for the preceding rule:
+
+```go
+type User struct {
+	Name  string `validate:"required,msg=Name is required"`
+	Email string `validate:"email,msg=Please enter a valid email"`
+}
+```
+
+### Nested Structs
+
+Nested structs with `validate` tags are validated automatically. Error field paths use dot notation:
+
+```go
+type Address struct {
+	Street string `validate:"required"`
+	City   string `validate:"required"`
+}
+
+type User struct {
+	Name    string  `validate:"required"`
+	Address Address
+}
+
+err := validatex.Validate(User{Name: "Alice", Address: Address{}})
+// errors: Address.Street: is required, Address.City: is required
+```
+
+### ValidateField
+
+Validate a single value against a rules string without defining a struct:
+
+```go
+err := validatex.ValidateField("bad", "email")
+err = validatex.ValidateField("", "required,min=3")
+err = validatex.ValidateField(42, "min=10,max=100")
+```
+
 ### Custom Rules
 
 ```go
@@ -69,12 +109,22 @@ type Config struct {
 | `url` | string | Must start with `http://` or `https://` |
 | `oneof=a\|b\|c` | string | Must be one of the listed values |
 | `pattern=regex` | string | Must match the regular expression |
+| `uuid` | string | Must be a valid UUID (8-4-4-4-12 hex format) |
+| `ip` | string | Must be a valid IPv4 or IPv6 address |
+| `ipv4` | string | Must be a valid IPv4 address |
+| `ipv6` | string | Must be a valid IPv6 address |
+| `alpha` | string | Must contain only ASCII letters |
+| `numeric` | string | Must contain only ASCII digits |
+| `alphanum` | string | Must contain only ASCII letters and digits |
+| `contains=X` | string | Must contain substring X |
+| `excludes=X` | string | Must not contain substring X |
 
 ## API
 
 | Function / Type | Description |
 |-----------------|-------------|
-| `Validate(v any) error` | Validate struct fields using `validate` tags |
+| `Validate(v any) error` | Validate struct fields using `validate` tags (supports nested structs) |
+| `ValidateField(value any, rules string) error` | Validate a single value against a rules string |
 | `Register(name, fn)` | Register a custom validation rule |
 | `Errors(err) []ValidationError` | Extract individual errors from a validation error |
 | `ValidationError` | Single field validation failure (Field, Rule, Message) |

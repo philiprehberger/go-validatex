@@ -2,6 +2,7 @@ package validatex
 
 import (
 	"fmt"
+	"net"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -48,6 +49,15 @@ func registerBuiltins() {
 	registry["oneof"] = ruleOneof
 	registry["len"] = ruleLen
 	registry["pattern"] = rulePattern
+	registry["uuid"] = ruleUUID
+	registry["ip"] = ruleIP
+	registry["ipv4"] = ruleIPv4
+	registry["ipv6"] = ruleIPv6
+	registry["alpha"] = ruleAlpha
+	registry["numeric"] = ruleNumeric
+	registry["alphanum"] = ruleAlphanum
+	registry["contains"] = ruleContains
+	registry["excludes"] = ruleExcludes
 }
 
 func ruleRequired(fv reflect.Value, fieldName string, _ string) *ValidationError {
@@ -192,6 +202,106 @@ func rulePattern(fv reflect.Value, fieldName string, param string) *ValidationEr
 	}
 	if !re.MatchString(fv.String()) {
 		return &ValidationError{Field: fieldName, Rule: "pattern", Message: fmt.Sprintf("must match pattern %s", param)}
+	}
+	return nil
+}
+
+var uuidRegex = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
+
+func ruleUUID(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	if !uuidRegex.MatchString(fv.String()) {
+		return &ValidationError{Field: fieldName, Rule: "uuid", Message: "must be a valid UUID"}
+	}
+	return nil
+}
+
+func ruleIP(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	if net.ParseIP(fv.String()) == nil {
+		return &ValidationError{Field: fieldName, Rule: "ip", Message: "must be a valid IP address"}
+	}
+	return nil
+}
+
+func ruleIPv4(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	ip := net.ParseIP(fv.String())
+	if ip == nil || ip.To4() == nil {
+		return &ValidationError{Field: fieldName, Rule: "ipv4", Message: "must be a valid IPv4 address"}
+	}
+	return nil
+}
+
+func ruleIPv6(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	ip := net.ParseIP(fv.String())
+	if ip == nil || ip.To4() != nil {
+		return &ValidationError{Field: fieldName, Rule: "ipv6", Message: "must be a valid IPv6 address"}
+	}
+	return nil
+}
+
+func ruleAlpha(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	for _, r := range fv.String() {
+		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')) {
+			return &ValidationError{Field: fieldName, Rule: "alpha", Message: "must contain only letters"}
+		}
+	}
+	return nil
+}
+
+func ruleNumeric(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	for _, r := range fv.String() {
+		if r < '0' || r > '9' {
+			return &ValidationError{Field: fieldName, Rule: "numeric", Message: "must contain only digits"}
+		}
+	}
+	return nil
+}
+
+func ruleAlphanum(fv reflect.Value, fieldName string, _ string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	for _, r := range fv.String() {
+		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')) {
+			return &ValidationError{Field: fieldName, Rule: "alphanum", Message: "must contain only letters and digits"}
+		}
+	}
+	return nil
+}
+
+func ruleContains(fv reflect.Value, fieldName string, param string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	if !strings.Contains(fv.String(), param) {
+		return &ValidationError{Field: fieldName, Rule: "contains", Message: fmt.Sprintf("must contain %q", param)}
+	}
+	return nil
+}
+
+func ruleExcludes(fv reflect.Value, fieldName string, param string) *ValidationError {
+	if fv.Kind() != reflect.String {
+		return nil
+	}
+	if strings.Contains(fv.String(), param) {
+		return &ValidationError{Field: fieldName, Rule: "excludes", Message: fmt.Sprintf("must not contain %q", param)}
 	}
 	return nil
 }

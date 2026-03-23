@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- Add new built-in rules: `uuid`, `ip`, `ipv4`, `ipv6`, `alpha`, `numeric`, `alphanum`, `contains`, `excludes`
+- Add custom error messages via `msg` tag option
+- Add nested struct validation with dot-notation error paths
+- Add `ValidateField` function for validating single values against a rules string
+
 ## 0.1.3
 
 - Consolidate README badges onto single line
