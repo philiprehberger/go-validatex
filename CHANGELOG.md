@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Fix README structure: demote Built-in Rules to subsection
+
 ## 0.2.0
 
 - Add new built-in rules: `uuid`, `ip`, `ipv4`, `ipv6`, `alpha`, `numeric`, `alphanum`, `contains`, `excludes`

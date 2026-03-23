@@ -97,7 +97,7 @@ type Config struct {
 }
 ```
 
-## Built-in Rules
+### Built-in Rules
 
 | Rule | Applies To | Description |
 |------|-----------|-------------|
