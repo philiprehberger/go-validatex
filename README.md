@@ -1,6 +1,6 @@
 # go-validatex
 
-[![CI](https://github.com/philiprehberger/go-validatex/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/go-validatex/actions/workflows/ci.yml) [![Go Reference](https://pkg.go.dev/badge/github.com/philiprehberger/go-validatex.svg)](https://pkg.go.dev/github.com/philiprehberger/go-validatex) [![License](https://img.shields.io/github/license/philiprehberger/go-validatex)](LICENSE)
+[![CI](https://github.com/philiprehberger/go-validatex/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/go-validatex/actions/workflows/ci.yml) [![Go Reference](https://pkg.go.dev/badge/github.com/philiprehberger/go-validatex.svg)](https://pkg.go.dev/github.com/philiprehberger/go-validatex) [![License](https://img.shields.io/github/license/philiprehberger/go-validatex)](LICENSE) [![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Struct validation library for Go using struct tags. Zero external dependencies
 
